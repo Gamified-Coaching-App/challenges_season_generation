@@ -15,9 +15,9 @@ export async function handler(event) {
         };
     }
 
-    const { details } = data;
+    // const { details } = data;
     // console.log("Event details:", details);
-    const { start_date, buckets } = details;
+    const { start_date, buckets } = data;
     // console.log("Start date:", start_date);
 
     try {
@@ -81,11 +81,10 @@ async function getAllTemplates(tableName) {
     let items;
     do {
         items = await document_client.scan(params).promise();
-        templates.push(...items.Items); // Add the retrieved items to the templates array
-        params.ExclusiveStartKey = items.LastEvaluatedKey; // Set the start key for the next scan (if there are more items to retrieve)
-    } while (items.LastEvaluatedKey); // Continue scanning if there are more items to be retrieved
-
-    return templates; // Return the array of templates
+        templates.push(...items.Items); 
+        params.ExclusiveStartKey = items.LastEvaluatedKey; 
+    } while (items.LastEvaluatedKey); 
+    return templates; 
 }
 
 
