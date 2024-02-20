@@ -5,8 +5,8 @@ const document_client = new aws.DynamoDB.DocumentClient();
 
 export async function handler(event) {
     let data;
-    if (event.details) {
-        data = JSON.parse(event.details);
+    if (event.body) {
+        data = JSON.parse(event.body);
     } else {
         console.error("Event details are undefined or not valid JSON.");
         return {
@@ -16,7 +16,7 @@ export async function handler(event) {
     }
 
     console.log("Event details:", data);
-    const { start_date, buckets } = data;
+    const { start_date, buckets } = data.details;
 
     try {
         const templates = await getAllTemplates("challenges_template");
@@ -25,8 +25,6 @@ export async function handler(event) {
             const { average_skill, users } = bucket;
 
             for (const user_id of users) {
-                const filtered_templates = templates.filter(template => 
-                    template_ids.includes(template.template_id));
 
                 for (const template_data of filtered_templates) {
                     let target_meters = average_skill * template_data.distance_factor * 1000; 
