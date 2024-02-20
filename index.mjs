@@ -1,53 +1,31 @@
 import aws from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
-const s3 = new aws.S3();
 const documentClient = new aws.DynamoDB.DocumentClient();
 
-// const bucket_name = 'mariia-shapovalova-test-bucket';
-// const object_key = 'bucket_averages_season_1.json';
-
 export async function handler(event) {
+    // Parse the incoming JSON data from the API Gateway event body
+    const data = JSON.parse(event.body);
 
-    if (event['detail-type'] !== 'buckets_processed') {
-        console.log('Event is not a buckets_processed event.');
-        return;
-    }
-
-    // Extract required details from the event details
-    const { bucket_name: bucket_name, object_key: object_key} = event.detail;
+    // Extract required details from the parsed data
+    const { season_id, start_date, end_date, buckets } = data.details;
 
     try {
-
-        let data; 
-        
-        try {
-            // Step 1: Fetch the data from S3
-            const s3Params = {
-                Bucket: bucket_name,
-                Key: object_key,
-            };
-            const s3Data = await s3.getObject(s3Params).promise();
-            data = JSON.parse(s3Data.Body.toString('utf-8')); // Parse the JSON data from S3
-        
-        } catch (error) {
-            console.error("Error fetching or parsing data from S3:", error);
-            throw error; 
-        }
-
-        const { season_id, start_date, end_date, buckets } = data;
-
         // Retrieve all templates once since they are the same for every user
         const templates = await getAllTemplates("challenges_template");
 
         // Process each bucket...
         for (const bucket of buckets) {
-            const { bucket_id, averageSkill, users } = bucket;
+            const { bucket_id, averageSkill, users, templateIds } = bucket;
 
             // Process each user in the bucket
             for (const user_id of users) {
+                // Filter templates based on templateIds in the bucket
+                const filteredTemplates = templates.filter(template => 
+                    templateIds.includes(template.template_id));
+
                 // Process each filtered template for the user
-                for (const templateData of templates) {
+                for (const templateData of filteredTemplates) {
                     let targetMeters = averageSkill * templateData.distance_factor * 1000; 
                     targetMeters = Math.round(targetMeters / 10) * 10;
                     const points = Math.round(targetMeters * templateData.reward_factor);
@@ -79,8 +57,14 @@ export async function handler(event) {
                 }
             }
         }
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: "Challenges created successfully." }),
+        };
+
     } catch (error) {
-        console.error("Error processing data from S3:", error);
+        console.error("Error processing data:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: "Failed to process data due to an internal error." }),
