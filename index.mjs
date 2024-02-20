@@ -32,7 +32,8 @@ export async function handler(event) {
                     let target_meters = average_skill * template_data.distance_factor * 1000; 
                     target_meters = Math.round(target_meters / 10) * 10;
                     const points = Math.round(target_meters * template_data.reward_factor);
-
+                    
+                    console.log("Start date passes in:", start_date);
                     let challenge_start_date = new Date(start_date);
                     challenge_start_date.setDate(challenge_start_date.getDate() + template_data.offset);
                     console.log("Calculated challenge_start_date:", challenge_start_date);
