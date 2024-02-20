@@ -20,7 +20,9 @@ export async function handler(event) {
         };
     }
 
-    const { season_id, start_date, end_date, buckets } = data;
+    // For HTTP API with payload format version 2.0
+    console.log("Event details:", data); 
+    const { start_date, buckets } = data;
 
     try {
         // Retrieve all templates once since they are the same for every user
