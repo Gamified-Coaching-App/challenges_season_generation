@@ -5,9 +5,21 @@ const documentClient = new aws.DynamoDB.DocumentClient();
 
 export async function handler(event) {
     // Parse the incoming JSON data from the API Gateway event body
-    const data = JSON.parse(event.details);
+    // const data = JSON.parse(event.details);
 
     // Extract required details from the parsed data
+    let data;
+    if (event.body) {
+        data = JSON.parse(event.details);
+    } else {
+        // Handle cases where event.body is undefined or not as expected
+        console.error("Event body is undefined or not valid JSON.");
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: "Bad request. No data found." }),
+        };
+    }
+
     const { season_id, start_date, end_date, buckets } = data;
 
     try {
