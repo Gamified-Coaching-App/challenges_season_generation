@@ -14,7 +14,7 @@ export async function handler(event) {
         return;
     }
 
-    // Extract required details from the event
+    // Extract required details from the event details
     const { bucket_name: bucket_name, object_key: object_key} = event.detail;
 
     try {
