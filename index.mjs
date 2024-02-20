@@ -35,9 +35,11 @@ export async function handler(event) {
 
                     let challenge_start_date = new Date(start_date);
                     challenge_start_date.setDate(challenge_start_date.getDate() + template_data.offset);
+                    console.log("Calculated challenge_start_date:", challenge_start_date);
 
                     let challenge_end_date = new Date(challenge_start_date);
                     challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
+                    console.log("Calculated challenge_end_date:", challenge_end_date);
 
                     const formatted_start_date = challenge_start_date.toISOString().split('T')[0] + 'T00:00:00';
                     const formatted_end_date = challenge_end_date.toISOString().split('T')[0] + 'T23:59:59';
