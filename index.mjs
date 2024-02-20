@@ -33,12 +33,8 @@ export async function handler(event) {
                     target_meters = Math.round(target_meters / 10) * 10;
                     const points = Math.round(target_meters * template_data.reward_factor);
                     
-                    console.log("Start date passes in:", start_date);
-                    console.log("Direct Date Parsing:", new Date("2024-01-01"));
                     let challenge_start_date = new Date(start_date);
-                    console.log("Calculated challenge_start_date:", challenge_start_date);
-                    console.log("template_data:", template_data);
-                    challenge_start_date.setDate(challenge_start_date.getDate() + template_data.offset);
+                    challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
 
                     let challenge_end_date = new Date(challenge_start_date);
                     challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
