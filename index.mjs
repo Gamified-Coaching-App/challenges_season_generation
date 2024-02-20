@@ -16,9 +16,9 @@ export async function handler(event) {
     }
 
     const { details } = data;
-    console.log("Event details:", details);
+    // console.log("Event details:", details);
     const { start_date, buckets } = details;
-    console.log("Start date:", start_date);
+    // console.log("Start date:", start_date);
 
     try {
         const templates = await getAllTemplates("challenges_template");
@@ -79,7 +79,7 @@ async function getAllTemplates(tableName) {
     let templates = [];
     let items;
     do {
-        items = await documentClient.scan(params).promise();
+        items = await document_client.scan(params).promise();
         templates.push(...items.Items); // Add the retrieved items to the templates array
         params.ExclusiveStartKey = items.LastEvaluatedKey; // Set the start key for the next scan (if there are more items to retrieve)
     } while (items.LastEvaluatedKey); // Continue scanning if there are more items to be retrieved
@@ -95,7 +95,7 @@ async function createChallengeEntry(challengeData, tableName) {
         Item: challengeData,
     };
     try {
-        await documentClient.put(params).promise();
+        await document_client.put(params).promise();
     } catch (error) {
         console.error("Error creating challenge entry:", error);
         throw error;
