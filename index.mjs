@@ -9,7 +9,7 @@ export async function handler(event) {
 
     // Extract required details from the parsed data
     let data;
-    if (event.body) {
+    if (event.details) {
         data = JSON.parse(event.details);
     } else {
         // Handle cases where event.body is undefined or not as expected
