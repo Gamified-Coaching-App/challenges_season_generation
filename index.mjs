@@ -5,10 +5,10 @@ const documentClient = new aws.DynamoDB.DocumentClient();
 
 export async function handler(event) {
     // Parse the incoming JSON data from the API Gateway event body
-    const data = JSON.parse(event.body);
+    const data = JSON.parse(event.details);
 
     // Extract required details from the parsed data
-    const { season_id, start_date, end_date, buckets } = data.details;
+    const { season_id, start_date, end_date, buckets } = data;
 
     try {
         // Retrieve all templates once since they are the same for every user
