@@ -36,8 +36,9 @@ export async function handler(event) {
                     console.log("Start date passes in:", start_date);
                     console.log("Direct Date Parsing:", new Date("2024-01-01"));
                     let challenge_start_date = new Date(start_date);
-                    challenge_start_date.setDate(challenge_start_date.getDate() + template_data.offset);
                     console.log("Calculated challenge_start_date:", challenge_start_date);
+                    console.log("template_data:", template_data);
+                    challenge_start_date.setDate(challenge_start_date.getDate() + template_data.offset);
 
                     let challenge_end_date = new Date(challenge_start_date);
                     challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
