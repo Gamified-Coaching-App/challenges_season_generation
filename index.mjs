@@ -28,7 +28,7 @@ export async function handler(event) {
 
             for (const user_id of users) {
 
-                for (const template_data of filtered_templates) {
+                for (const template_data of templates) {
                     let target_meters = average_skill * template_data.distance_factor * 1000; 
                     target_meters = Math.round(target_meters / 10) * 10;
                     const points = Math.round(target_meters * template_data.reward_factor);
