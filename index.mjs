@@ -16,7 +16,8 @@ export async function handler(event) {
     }
 
     console.log("Event details:", data);
-    const { start_date, buckets } = data.details;
+    const { details } = data;
+    const { start_date, buckets } = details;
 
     try {
         const templates = await getAllTemplates("challenges_template");
