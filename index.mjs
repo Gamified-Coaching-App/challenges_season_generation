@@ -1,71 +1,56 @@
 import aws from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
-const documentClient = new aws.DynamoDB.DocumentClient();
+const document_client = new aws.DynamoDB.DocumentClient();
 
 export async function handler(event) {
-    // Parse the incoming JSON data from the API Gateway event body
-    // const data = JSON.parse(event.details);
-
-    // Extract required details from the parsed data
     let data;
     if (event.details) {
         data = JSON.parse(event.details);
     } else {
-        // Handle cases where event.body is undefined or not as expected
-        console.error("Event body is undefined or not valid JSON.");
+        console.error("Event details are undefined or not valid JSON.");
         return {
             statusCode: 400,
             body: JSON.stringify({ error: "Bad request. No data found." }),
         };
     }
 
-    // For HTTP API with payload format version 2.0
-    console.log("Event details:", data); 
+    console.log("Event details:", data);
     const { start_date, buckets } = data;
 
     try {
-        // Retrieve all templates once since they are the same for every user
         const templates = await getAllTemplates("challenges_template");
 
-        // Process each bucket...
         for (const bucket of buckets) {
-            const { bucket_id, averageSkill, users, templateIds } = bucket;
+            const { average_skill, users } = bucket;
 
-            // Process each user in the bucket
             for (const user_id of users) {
-                // Filter templates based on templateIds in the bucket
-                const filteredTemplates = templates.filter(template => 
-                    templateIds.includes(template.template_id));
+                const filtered_templates = templates.filter(template => 
+                    template_ids.includes(template.template_id));
 
-                // Process each filtered template for the user
-                for (const templateData of filteredTemplates) {
-                    let targetMeters = averageSkill * templateData.distance_factor * 1000; 
-                    targetMeters = Math.round(targetMeters / 10) * 10;
-                    const points = Math.round(targetMeters * templateData.reward_factor);
+                for (const template_data of filtered_templates) {
+                    let target_meters = average_skill * template_data.distance_factor * 1000; 
+                    target_meters = Math.round(target_meters / 10) * 10;
+                    const points = Math.round(target_meters * template_data.reward_factor);
 
-                    // Calculate the actual start date based on the template's offset
-                    let challengeStartDate = new Date(start_date);
-                    challengeStartDate.setDate(challengeStartDate.getDate() + templateData.offset);
+                    let challenge_start_date = new Date(start_date);
+                    challenge_start_date.setDate(challenge_start_date.getDate() + template_data.offset);
 
-                    // Calculate the end date based on the start date and the template's duration
-                    let challengeEndDate = new Date(challengeStartDate);
-                    challengeEndDate.setDate(challengeEndDate.getDate() + templateData.duration - 1);
+                    let challenge_end_date = new Date(challenge_start_date);
+                    challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
 
-                    // Format the dates to ISO string with time component adjusted
-                    const formattedStartDate = challengeStartDate.toISOString().split('T')[0] + 'T00:00:00';
-                    const formattedEndDate = challengeEndDate.toISOString().split('T')[0] + 'T23:59:59';
+                    const formatted_start_date = challenge_start_date.toISOString().split('T')[0] + 'T00:00:00';
+                    const formatted_end_date = challenge_end_date.toISOString().split('T')[0] + 'T23:59:59';
                     
-                    // Create a new challenge entry for the user based on the current template
                     await createChallengeEntry({
                         user_id: user_id,
                         challenge_id: uuidv4(),
                         completed_meters: 0,
-                        start_date: formattedStartDate,
-                        end_date: formattedEndDate,
+                        start_date: formatted_start_date,
+                        end_date: formatted_end_date,
                         status: "current",
-                        target_meters: targetMeters,
-                        template_id: templateData.template_id,
+                        target_meters: target_meters,
+                        template_id: template_data.template_id,
                         points: points,
                     }, "challenges");
                 }
@@ -86,4 +71,33 @@ export async function handler(event) {
     }
 }
 
-// Include the definitions of getAllTemplates and createChallengeEntry functions here
+async function getAllTemplates(tableName) {
+    const params = {
+        TableName: tableName,
+    };
+
+    let templates = [];
+    let items;
+    do {
+        items = await documentClient.scan(params).promise();
+        templates.push(...items.Items); // Add the retrieved items to the templates array
+        params.ExclusiveStartKey = items.LastEvaluatedKey; // Set the start key for the next scan (if there are more items to retrieve)
+    } while (items.LastEvaluatedKey); // Continue scanning if there are more items to be retrieved
+
+    return templates; // Return the array of templates
+}
+
+
+
+async function createChallengeEntry(challengeData, tableName) {
+    const params = {
+        TableName: tableName,
+        Item: challengeData,
+    };
+    try {
+        await documentClient.put(params).promise();
+    } catch (error) {
+        console.error("Error creating challenge entry:", error);
+        throw error;
+    }
+}
