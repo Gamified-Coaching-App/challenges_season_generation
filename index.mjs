@@ -58,9 +58,10 @@ export async function handler(event) {
 
             for (const user_id of users) {
                 for (const template_data of templates) {
-                    let target_meters = average_skill * template_data.distance_factor * 1000; 
+                    // 3 is a random factor for now - think of a better way to calculate this
+                    let target_meters = average_skill * template_data.distance_factor * 1000 * 3; 
                     target_meters = Math.round(target_meters / 10) * 10;
-                    const points = Math.round(target_meters * template_data.reward_factor);
+                    const points = Math.round(target_meters * template_data.reward_factor) / 1000;
 
                     let challenge_start_date = new Date(start_date);
                     challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
