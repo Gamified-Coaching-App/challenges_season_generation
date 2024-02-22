@@ -25,6 +25,22 @@ async function getAllTemplates(tableName) {
     return templates;
 }
 
+async function deleteAllChallenges(tableName) {
+    let params = { TableName: tableName };
+    let items;
+
+    do {
+        items = await documentClient.scan(params).promise();
+        for (const item of items.Items) {
+            await documentClient.delete({
+                TableName: tableName,
+                Key: { 'user_id': item.user_id, 'challenge_id': item.challenge_id }
+            }).promise();
+        }
+        params.ExclusiveStartKey = items.LastEvaluatedKey;
+    } while (items.LastEvaluatedKey);
+}
+
 async function createChallengeEntries(challengeDataArray, tableName) {
     let requestItems = challengeDataArray.map(challengeData => ({
         PutRequest: { Item: challengeData }
@@ -50,6 +66,9 @@ export async function handler(event) {
     const { season_id, start_date, buckets } = data;
 
     try {
+        // Delete all challenges before creating new ones
+        await deleteAllChallenges("challenges");
+        
         const templates = await getAllTemplates("challenges_template");
         let challengeDataArray = [];
 
