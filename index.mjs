@@ -47,7 +47,7 @@ export async function handler(event) {
         return { statusCode: 400, body: JSON.stringify({ error: "Bad request. No data found." }) };
     }
 
-    const { start_date, buckets } = data;
+    const { season_id, start_date, buckets } = data;
 
     try {
         const templates = await getAllTemplates("challenges_template");
@@ -58,7 +58,7 @@ export async function handler(event) {
 
             for (const user_id of users) {
                 for (const template_data of templates) {
-                    
+                    // convert from km to meters
                     let target_meters = average_skill * template_data.distance_factor * 1000; 
                     target_meters = Math.round(target_meters / 10) * 10;
                     const points = Math.round(target_meters * template_data.reward_factor) / 1000;
@@ -82,6 +82,7 @@ export async function handler(event) {
                         target_meters: target_meters,
                         template_id: template_data.template_id,
                         points: points,
+                        season_id: season_id,
                     });
                 }
             }
