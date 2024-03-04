@@ -6,7 +6,7 @@ const documentClient = new aws.DynamoDB.DocumentClient();
 // Assuming templates do not change frequently, cache them in memory
 let cachedTemplates = null;
 
-async function getAllTemplates(tableName) {
+export async function getAllTemplates(tableName) {
     if (cachedTemplates) {
         return cachedTemplates;
     }
