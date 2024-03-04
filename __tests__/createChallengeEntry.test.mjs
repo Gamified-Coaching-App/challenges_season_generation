@@ -38,7 +38,5 @@ describe('createChallengeEntries', () => {
       // Second call with the next 25 items
       expect(documentClient.batchWrite.mock.calls[1][0].RequestItems[tableName]).toHaveLength(25);
     });
-  
-    // Add more tests as needed...
   });
   
