@@ -25,7 +25,7 @@ export async function getAllTemplates(tableName) {
     return templates;
 }
 
-async function deleteAllChallenges(tableName) {
+export async function deleteAllChallenges(tableName) {
     let params = { TableName: tableName };
     let items;
 
@@ -41,7 +41,7 @@ async function deleteAllChallenges(tableName) {
     } while (items.LastEvaluatedKey);
 }
 
-async function createChallengeEntries(challengeDataArray, tableName) {
+export async function createChallengeEntries(challengeDataArray, tableName) {
     let requestItems = challengeDataArray.map(challengeData => ({
         PutRequest: { Item: challengeData }
     }));
