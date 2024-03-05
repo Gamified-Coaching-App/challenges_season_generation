@@ -74,8 +74,8 @@ export async function handler(event) {
 
         for (const bucket of buckets) {
             const { bucket_id, average_skill, users } = bucket;
-            if (bucket_id === -1) {
-                continue; // Skip the global bucket
+            if (Number(bucket_id) === -1) {
+                continue; // Skip the new user bucket
             }
             for (const user_id of users) {
                 for (const template_data of templates) {
