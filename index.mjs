@@ -80,7 +80,8 @@ export async function handler(event) {
                     // convert from km to meters
                     let target_meters = average_skill * template_data.distance_factor * 1000; 
                     target_meters = Math.round(target_meters / 10) * 10;
-                    const points = Math.round(target_meters * template_data.reward_factor) / 1000;
+                    // 10 points for 1 km
+                    const points = Math.round(target_meters * template_data.reward_factor * 10) / 1000;
 
                     let challenge_start_date = new Date(start_date);
                     challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
