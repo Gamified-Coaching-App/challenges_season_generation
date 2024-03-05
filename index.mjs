@@ -73,7 +73,7 @@ export async function handler(event) {
         let challengeDataArray = [];
 
         for (const bucket of buckets) {
-            const { average_skill, users } = bucket;
+            const { bucket_id, average_skill, users } = bucket;
 
             for (const user_id of users) {
                 for (const template_data of templates) {
@@ -102,6 +102,7 @@ export async function handler(event) {
                         template_id: template_data.template_id,
                         points: points,
                         season_id: season_id,
+                        bucket_id: bucket_id,
                     });
                 }
             }
