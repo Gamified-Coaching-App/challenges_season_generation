@@ -3,6 +3,7 @@ import { createChallengeEntries } from '../index.mjs';
 
 // Mock AWS SDK's DynamoDB DocumentClient
 jest.mock('aws-sdk', () => {
+  // Mock the batchWrite method
   const batchWriteMock = jest.fn().mockImplementation(() => ({
     promise: jest.fn().mockResolvedValue({ UnprocessedItems: {} }),
   }));

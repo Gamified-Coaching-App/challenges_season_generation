@@ -13,6 +13,7 @@ beforeEach(() => {
 
 // Mock the entire AWS SDK
 jest.mock('aws-sdk', () => {
+  // Mock the scan method
   const scanMock = jest.fn();
   return {
     DynamoDB: {
