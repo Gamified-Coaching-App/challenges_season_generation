@@ -88,13 +88,14 @@ export async function handler(event) {
                     let challenge_start_date = new Date(start_date);
                     challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
 
-                    let challenge_end_date;
+                    let challenge_end_date = new Date(challenge_start_date.getTime()); 
+
                     if (template_data.duration === -1) {
                         // Get the last day of the month for the end date
                         challenge_end_date = new Date(challenge_start_date.getFullYear(), challenge_start_date.getMonth() + 1, 0);
                     } else {
-                        // Add duration days to the start date otherwise
-                        challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
+                        // Correctly add duration days to the start date otherwise
+                        challenge_end_date.setDate(challenge_start_date.getDate() + template_data.duration - 1);
                     }
 
                     const formatted_start_date = challenge_start_date.toISOString().split('T')[0] + 'T00:00:00';
