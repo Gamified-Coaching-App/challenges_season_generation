@@ -40,5 +40,10 @@ describe('Handler function tests', () => {
       statusCode: 200,
       body: JSON.stringify({ message: "Challenges created successfully." }),
     });
+
+    // Verifying the calls to AWS SDK methods directly on the mocked functions
+    //expect(AWS.DynamoDB.DocumentClient.prototype.scan).toHaveBeenCalledTimes(1);
+    //expect(AWS.DynamoDB.DocumentClient.prototype.batchWrite).toHaveBeenCalledTimes(1);
+    //expect(AWS.DynamoDB.DocumentClient.prototype.delete).toHaveBeenCalledTimes(1); // Adjust based on implementation
   });
 });
