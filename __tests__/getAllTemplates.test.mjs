@@ -1,10 +1,8 @@
 import aws from 'aws-sdk';
-import { getAllTemplates } from '../index.mjs'; // Adjust the import path as needed
+import { getAllTemplates } from '../utils.mjs'; 
 
-// Assume a variable for caching templates is declared somewhere in your module
 let cachedTemplates = null;
 
-// Resetting modules and cached templates to ensure a clean state
 beforeEach(() => {
   jest.resetModules();
   jest.clearAllMocks();

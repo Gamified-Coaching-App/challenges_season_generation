@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { createChallengeEntries } from '../index.mjs'; 
+import { createChallengeEntries } from '../utils.mjs'; 
 
 // Mock AWS SDK's DynamoDB DocumentClient
 jest.mock('aws-sdk', () => {
